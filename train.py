@@ -100,7 +100,7 @@ def extend_cfg(cfg):
     cfg.TRAINER.COCOOP.PREC = "fp16"  # fp16, fp32, amp
 
     cfg.DATASET.SUBSAMPLE_CLASSES = "all"  # all, base or new
-
+    cfg.FAIRFACECLASS = ""
 
 def setup_cfg(args):
     cfg = get_cfg_default()
@@ -203,5 +203,6 @@ if __name__ == "__main__":
         nargs=argparse.REMAINDER,
         help="modify config options using the command-line",
     )
+    parser.add_argument("--fairface-class", type=str, default="", help="select label class")
     args = parser.parse_args()
     main(args)
