@@ -100,7 +100,10 @@ def extend_cfg(cfg):
     cfg.TRAINER.COCOOP.PREC = "fp16"  # fp16, fp32, amp
 
     cfg.DATASET.SUBSAMPLE_CLASSES = "all"  # all, base or new
-    cfg.FAIRFACECLASS = ""
+    # cfg.DATASET.NUM_SHOTS = args.num_shots
+
+    cfg.FAIRFACECLASS = args.fairface_class
+
 
 def setup_cfg(args):
     cfg = get_cfg_default()
@@ -152,8 +155,8 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--root", type=str, default="", help="path to dataset")
-    parser.add_argument("--output-dir", type=str, default="", help="output directory")
+    parser.add_argument("--root", type=str, default="/work/tesi_aonori/CoOp_datasets", help="path to dataset")
+    parser.add_argument("--output-dir", type=str, default="output/tmp", help="output directory")
     parser.add_argument(
         "--resume",
         type=str,
@@ -161,7 +164,7 @@ if __name__ == "__main__":
         help="checkpoint directory (from which the training resumes)",
     )
     parser.add_argument(
-        "--seed", type=int, default=-1, help="only positive value enables a fixed seed"
+        "--seed", type=int, default=1, help="only positive value enables a fixed seed"
     )
     parser.add_argument(
         "--source-domains", type=str, nargs="+", help="source domains for DA/DG"
@@ -173,15 +176,15 @@ if __name__ == "__main__":
         "--transforms", type=str, nargs="+", help="data augmentation methods"
     )
     parser.add_argument(
-        "--config-file", type=str, default="", help="path to config file"
+        "--config-file", type=str, default="configs/trainers/CoOp/rn50.yaml", help="path to config file"
     )
     parser.add_argument(
         "--dataset-config-file",
         type=str,
-        default="",
+        default="configs/datasets/fairface.yaml",
         help="path to config file for dataset setup",
     )
-    parser.add_argument("--trainer", type=str, default="", help="name of trainer")
+    parser.add_argument("--trainer", type=str, default="CoOp", help="name of trainer")
     parser.add_argument("--backbone", type=str, default="", help="name of CNN backbone")
     parser.add_argument("--head", type=str, default="", help="name of head")
     parser.add_argument("--eval-only", action="store_true", help="evaluation only")
@@ -203,6 +206,8 @@ if __name__ == "__main__":
         nargs=argparse.REMAINDER,
         help="modify config options using the command-line",
     )
-    parser.add_argument("--fairface-class", type=str, default="", help="select label class")
+    parser.add_argument("--fairface-class", type=str, default="gender", help="select label class")
+    # parser.add_argument("--num-shots", type=int, default=-1, help="select label class")
+
     args = parser.parse_args()
     main(args)

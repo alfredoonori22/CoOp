@@ -4,39 +4,26 @@ from dassl.data.datasets import DATASET_REGISTRY, Datum, DatasetBase
 from dassl.utils import read_json, write_json, mkdir_if_missing
 from .oxford_pets import OxfordPets
 
-dict_age_to_label = {
-    '0-2': 'infant',
-    '3-9': 'child',
-    '10-19': 'teen',
-    '20-29': 'twenties',
-    '30-39': 'thirties',
-    '40-49': 'forties',
-    '50-59': 'fifties',
-    '60-69': 'sixties',
-    'more than 70': 'senior'
-}
-
-dict_age_to_number = {'infant': 0,
-                      'child': 1,
-                      'teen': 2,
-                      'twenties': 3,
-                      'thirties': 4,
-                      'forties': 5,
-                      'fifties': 6,
-                      'sixties': 7,
-                      'senior': 8}
+dict_age_to_number = {'0-2': 0,
+                     '3-9': 1,
+                     '10-19': 2,
+                     '20-29': 3,
+                     '30-39': 4,
+                     '40-49': 5,
+                     '50-59': 6,
+                     '60-69': 7,
+                     'more than 70': 8}
 
 dict_gender_to_number = {'Male': 0,
                          'Female': 1}
 
-dict_race_to_number = {'White' : 0, 
-                       'Black': 1, 
-                       'Latino_Hispanic': 2, 
-                       'East Asian' : 3, 
-                       'Southeast Asian' : 4, 
-                       'Indian' : 5, 
+dict_race_to_number = {'White' : 0,
+                       'Black': 1,
+                       'Latino_Hispanic': 2,
+                       'East Asian' : 3,
+                       'Southeast Asian' : 4,
+                       'Indian' : 5,
                        'Middle Eastern' : 6}
-
 @DATASET_REGISTRY.register()
 class FairFace(DatasetBase):
     
@@ -47,7 +34,7 @@ class FairFace(DatasetBase):
         self.dataset_dir = os.path.join(root, self.dataset_dir)
         self.image_dir = self.dataset_dir
         self.split_path = os.path.join(self.dataset_dir, "labels.json")
-        self.split_fewshot_dir = os.path.join(self.dataset_dir, "split_fewshot")
+        self.split_fewshot_dir = os.path.join(self.dataset_dir, f"{cfg.FAIRFACECLASS}_split_fewshot")
         mkdir_if_missing(self.split_fewshot_dir)
         
         if os.path.exists(self.split_path):
@@ -59,8 +46,7 @@ class FairFace(DatasetBase):
         num_shots = cfg.DATASET.NUM_SHOTS
         if num_shots >= 1:
             seed = cfg.SEED
-            # TODO: ho modificato il path 
-            preprocessed = os.path.join(self.split_fewshot_dir, f"age_shot_{num_shots}-seed_{seed}.pkl")
+            preprocessed = os.path.join(self.split_fewshot_dir, f"{cfg.FAIRFACECLASS}_shot_{num_shots}-seed_{seed}.pkl")
             
             if os.path.exists(preprocessed):
                 print(f"Loading preprocessed few-shot data from {preprocessed}")
@@ -88,23 +74,33 @@ def read_split(filepath, path_prefix, class_label):
             for impath, label, classname in items:
                 impath = os.path.join(path_prefix, impath)
                 if class_label == 'age':
-                    item = Datum(impath=impath, label=int(dict_age_to_number[dict_age_to_label[classname[0]]]), classname=dict_age_to_label[classname[0]])
+                    item = Datum(impath=impath, label=int(dict_age_to_number[classname[0]]), classname=classname[0])
                 elif class_label == 'gender':
                     item = Datum(impath=impath, label=int(dict_gender_to_number[classname[1]]), classname=classname[1])
                 elif class_label == 'race':
                     item = Datum(impath=impath, label=int(dict_race_to_number[classname[2]]), classname=classname[2])
-                else: 
-                    print(f'FairFace class {class_label} does not exist')
-                    raise Exception('FairFace Class Error')
-                
+                else:
+                    raise Exception(f'FairFace class {class_label} does not exist')
+
                 out.append(item)
             return out
 
         print(f"Reading split from {filepath}")
         split = read_json(filepath)
-        train = _convert(split["train"])
-        val = train[int(len(train)-0.1*len(train)):]
-        train = train[:int(len(train)-0.1*len(train))]
-        test = _convert(split["valid"])
+
+        if class_label == "gender":
+            train = _convert(split["train"][:400])
+            test = _convert(split["valid"][:80])
+        elif class_label == "race":
+            train = _convert(split["train"][:1400])
+            test = _convert(split["valid"][:280])
+        elif class_label == "age":
+            train = _convert(split["train"][:1800])
+            test = _convert(split["valid"][:360])
+        else:
+            raise Exception(f'FairFace class {class_label} does not exist')
+
+        val = train[int(0.9*len(train)):]
+        train = train[:int(0.9*len(train))]
 
         return train, val, test
