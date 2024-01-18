@@ -25,8 +25,10 @@ def load_clip_to_cpu(backbone_name="RN50"):
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument("fpath", type=str, help="Path to the learned prompt")
-parser.add_argument("topk", type=int, help="Select top-k similar words")
+parser.add_argument("--fpath", type=str,
+                    default="/homes/aonori/Tirocinio/CoOp/output/fairface/CoOp/gender/vit_b32_16shots/nctx16_cscFalse_ctpend/seed3/prompt_learner/model.pth.tar-200",
+                    help="Path to the learned prompt")
+parser.add_argument("--topk", type=int, default=3, help="Select top-k similar words")
 args = parser.parse_args()
 
 fpath = args.fpath
