@@ -26,7 +26,8 @@ CUSTOM_TEMPLATES = {
     "ImageNetV2": "a photo of a {}.",
     "ImageNetA": "a photo of a {}.",
     "ImageNetR": "a photo of a {}.",
-    "Fairface": "a photo of a {} years old person.",
+    #TODO: generalize the prompt for the different classes if possible
+    "FairFace": "a photo of a {} person.",
 }
 
 
