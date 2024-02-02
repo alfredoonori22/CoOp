@@ -89,14 +89,14 @@ def read_split(filepath, path_prefix, class_label):
         split = read_json(filepath)
 
         if class_label == "gender":
-            train = _convert(split["train"][:400])
-            test = _convert(split["valid"][:80])
+            train = _convert(split["train"])
+            test = _convert(split["valid"])
         elif class_label == "race":
-            train = _convert(split["train"][:1400])
-            test = _convert(split["valid"][:280])
+            train = _convert(split["train"])
+            test = _convert(split["valid"])
         elif class_label == "age":
-            train = _convert(split["train"][:1800])
-            test = _convert(split["valid"][:360])
+            train = _convert(split["train"])
+            test = _convert(split["valid"])
         else:
             raise Exception(f'FairFace class {class_label} does not exist')
 
