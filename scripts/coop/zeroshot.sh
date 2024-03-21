@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # custom config
-DATA=/work/tesi_aonori/CoOp_datasets
+DATA=/work/tesi_aonori/datasets
 TRAINER=ZeroshotCLIP
 DATASET=$1
 CFG=$2  # rn50, rn101, vit_b32 or vit_b16

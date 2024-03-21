@@ -155,7 +155,7 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--root", type=str, default="/work/tesi_aonori/CoOp_datasets", help="path to dataset")
+    parser.add_argument("--root", type=str, default="/work/tesi_aonori/datasets", help="path to dataset")
     parser.add_argument("--output-dir", type=str, help="output directory")
     parser.add_argument(
         "--resume",

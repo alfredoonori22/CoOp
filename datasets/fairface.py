@@ -30,7 +30,7 @@ class FairFace(DatasetBase):
     dataset_dir = "FairFace"
 
     def __init__(self, cfg):
-        root = os.path.abspath('/work/tesi_aonori/CoOp_datasets/')
+        root = os.path.abspath('/work/tesi_aonori/datasets/')
         self.dataset_dir = os.path.join(root, self.dataset_dir)
         self.image_dir = self.dataset_dir
         self.split_path = os.path.join(self.dataset_dir, "labels.json")
